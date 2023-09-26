@@ -1,13 +1,13 @@
-const { userModel, tokenModel } = require('../models/index');
-const withTransactions = require('../middlewares/mongooseTransaction');
-const generateUserToken = require('../middlewares/createTokenUser');
-const { tokenResponse } = require('../utils/jwt');
-const crypto = require('crypto');
-const { StatusCodes } = require('http-status-codes');
-const jsonwebtoken = require('jsonwebtoken');
-const jwt = require('jsonwebtoken');
-const sendMail = require('./emailService');
-const bcrypt = require('bcryptjs');
+import { userModel, tokenModel } from '../models/index';
+import withTransactions from '../middlewares/mongooseTransaction';
+import { createUserToken } from '../middlewares/createTokenUser';
+import { tokenResponse } from '../utils/jwt';
+import crypto from 'crypto';
+import { StatusCodes } from 'http-status-codes';
+import jsonwebtoken from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import sendMail from './emailService';
+import bcrypt from 'bcryptjs';
 
 const signup = withTransactions(async (req, res, session) => {
   const { email, ...rest } = req.body;
@@ -56,7 +56,7 @@ const signin = withTransactions(async (req, res, session) => {
     return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'User do not exist!!' });
   }
 
-  const tokenUser = generateUserToken(user);
+  const tokenUser = createUserToken(user);
   let refreshToken = '';
 
   const existingToken = await tokenModel.findOne({ user: user._id });
@@ -154,4 +154,4 @@ const resetPassword = withTransactions(async (req, res, session) => {
   }
 });
 
-module.exports = { signup, signin, forgotPassword, resetPassword };
+export { signup, signin, forgotPassword, resetPassword };

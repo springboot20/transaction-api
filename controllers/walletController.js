@@ -1,8 +1,8 @@
-const { walletModel } = require('../models/index');
-const { StatusCodes } = require('http-status-codes');
-const transactions = require('../middlewares/mongooseTransaction');
+import { walletModel } from '../models/index';
+import { StatusCodes } from 'http-status-codes';
+import transactions from '../middlewares/mongooseTransaction';
 
-const createWallet = transactions(async (req, res, session) => {
+const createWallet = async (req, res, session) => {
   try {
     const walletExist = await walletModel.findOne({ user: req.user.userId });
 
@@ -22,12 +22,12 @@ const createWallet = transactions(async (req, res, session) => {
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
-});
+};
 
 const getAllUserWallet = async (req, res) => {
   try {
     const usersWallets = await walletModel.find({});
-    res.status(StatusCodes.Ok).json({ data: usersWallets });
+    res.status(StatusCodes.OK).json({ data: usersWallets });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
@@ -46,4 +46,4 @@ const getUserWallet = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { createWallet, getUserWallet, getAllUserWallet };
+export { createWallet, getUserWallet, getAllUserWallet };

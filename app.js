@@ -1,31 +1,23 @@
 require('dotenv').config();
 require('./db/connection')();
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const errorHandler = require('./middlewares/errorHandler');
-const routers = require('./routes/index');
-const http = require('http');
-
-const SocketIO = require('socket.io');
-
-const CHAT_WITH_CONSULTANT = 'CHAT_WITH_CONSULTANT';
+import express from 'express';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import errorHandler from './middlewares/errorHandler';
+import routers from './routes/index';
+import http from 'http';
+import initiateIO from './socketIO/socket';
+// const hbs = require("express-handlebar")
 
 const app = express();
 const PORT = process.env.PORT || 4040;
 const server = http.createServer(app);
+const CHAT_WITH_CONSULTANT = 'CHAT_WITH_CONSULTANT';
 
-const io = new SocketIO.Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-});
-
-// io.on('connection', () => {});
+// SOCKET CONNECTION
+initiateIO(server);
 
 mongoose.connection.on('connect', () => {
   console.log('Mongodb connected ....');
@@ -40,13 +32,13 @@ process.on('SIGINT', () => {
 
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: '*',
     credentials: true,
   })
 );
-app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

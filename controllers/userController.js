@@ -1,9 +1,9 @@
-const { userModel } = require('../models/index');
-const withTransactions = require('../middlewares/mongooseTransaction');
-const { StatusCodes } = require('http-status-codes');
-const bcrypt = require('bcryptjs');
-const moment = require('moment');
-const { checkUserPermission } = require('../utils/jwt');
+import { userModel } from '../models/index';
+import withTransactions from '../middlewares/mongooseTransaction';
+import { StatusCodes } from 'http-status-codes';
+import bcrypt from 'bcryptjs';
+import moment from 'moment';
+import { checkUserPermission } from '../utils/jwt';
 
 async function hashPassword(enteredPassword) {
   const salt = await bcrypt.genSalt(10);
@@ -101,4 +101,4 @@ const userStatistics = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, getUser, updateUser, userStatistics };
+export { getAllUsers, getUser, updateUser, userStatistics };

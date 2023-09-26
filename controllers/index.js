@@ -1,9 +1,9 @@
-const authController = require('./authController');
-const userController = require('./userController');
-const transactionController = require('./transactionController');
-const walletController = require('./walletTransaction');
+import authController from './authController'
+import userController from './userController'
+import transactionController from './transactionController'
+import walletController from './walletTransaction'
 
-module.exports = {
+export {
   authController,
   userController,
   transactionController,

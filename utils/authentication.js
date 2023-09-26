@@ -1,9 +1,9 @@
 /** @format */
 
-const { validateToken } = require('../utils/jwt.js');
-const model = require('../models/index');
-const { tokenResponse } = require('../utils/jwt');
-const { StatusCodes } = require('http-status-codes');
+import { validateToken } from '../utils/jwt.js'
+import * as models from '../models/index'
+import { tokenResponse } from '../utils/jwt'
+import { StatusCodes } from 'http-status-codes'
 
 const authenticate = async (req, res, next) => {
   let authHeader = req.headers?.authorization;
@@ -22,13 +22,13 @@ const authenticate = async (req, res, next) => {
 
   try {
     if (accessToken) {
-      const payload = await validateToken(accessToken);
+      const payload =  validateToken(accessToken);
       req.user = payload.user;
       return next();
     }
-    const payload = await validateToken(refreshToken);
+    const payload =  validateToken(refreshToken);
 
-    const existingToken = await model.tokenModel.findOne({
+    const existingToken = await models.tokenModel.findOne({
       user: payload.user.userId,
       refreshToken: payload.refreshToken,
     });

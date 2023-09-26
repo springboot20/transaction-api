@@ -1,5 +1,6 @@
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
+
 const OAuth2 = google.auth.OAuth2;
 
 const createTransporter = async () => {
@@ -47,4 +48,4 @@ const sendMail = async (emailOptions) => {
   }
 };
 
-module.exports = sendMail;
+export default sendMail;

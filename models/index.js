@@ -1,6 +1,6 @@
-const userModel = require('./user');
-const transactionModel = require('./transaction');
-const { walletModel, walletTransactionModel } = require('./wallet');
-const tokenModel = require('./token');
+import userModel from './user';
+import transactionModel from './transaction';
+import { walletModel, walletTransactionModel } from './wallet';
+import tokenModel from './token';
 
-module.exports = { userModel, transactionModel, walletModel, walletTransactionModel, tokenModel };
+export { userModel, transactionModel, walletModel, walletTransactionModel, tokenModel };

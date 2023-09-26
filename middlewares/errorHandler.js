@@ -1,4 +1,5 @@
-const { StatusCodes } = require('http-status-codes');
+import { StatusCodes } from 'http-status-codes';
+
 const errorHandler = (err, req, res, next) => {
   let customError = {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -29,4 +30,4 @@ const errorHandler = (err, req, res, next) => {
   res.status(customError.statusCode).json({ message: customError.message });
 };
 
-module.exports = errorHandler;
+export default errorHandler;

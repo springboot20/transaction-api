@@ -1,5 +1,5 @@
-const jsonwebtoken = require('jsonwebtoken');
-const { StatusCodes } = require('http-status-codes');
+import { StatusCodes } from 'http-status-codes' 
+import jsonwebtoken from 'jsonwebtoken'
 
 function validateToken(token) {
   try {
@@ -39,7 +39,7 @@ const checkUserPermission = (requestUser, resourceUserId) => {
   res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized to access this route' });
 };
 
-module.exports = {
+export {
   tokenResponse,
   validateToken,
   generateToken,

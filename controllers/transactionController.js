@@ -1,32 +1,23 @@
-const { StatusCodes } = require('http-status-codes');
-const { transactionModel, userModel, walletModel } = require('../models/index');
-const transactions = require('../middlewares/mongooseTransaction');
-const moment = require('moment');
+import { StatusCodes } from 'http-status-codes'
+import { transactionModel, userModel, walletModel } from '../models/index'
+import transactions from '../middlewares/mongooseTransaction'
+import moment from 'moment'
+import { createWallet } from './walletController'
+import Stripe from '../helpers/stripeService'
 
 const makeTransaction = transactions(async (req, res, session) => {
-  req.body.userId = req.user.userId;
-  const { amount, ...rest } = req.body;
-  let balance = 0;
+  req.body.user = req.user.userId;
+
+  const { email, amount, ...rest } = req.body;
 
   try {
-    const userDoc = await userModel.findOne({ _id: req.user.userId });
-    const walletDoc = await walletModel.findOne({ user: req.user.userId });
+    const user = await userModel.findOne({ email });
 
-    const transactionDoc = new transactionModel({
-      ...rest,
-      amount,
-    });
+    const payment = await Stripe.create
 
-    balance += Number(amount);
-
-    userDoc.transactions.push(transactionDoc._id);
-    walletDoc.balance = balance;
-
-    await transactionDoc.save({ session });
-    await userDoc.save({ session });
-    await walletDoc.save({ session });
-
-    res.status(StatusCodes.OK).json({ message: 'transaction successful', transactionDoc });
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'user do not found' });
+    }
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
@@ -34,7 +25,6 @@ const makeTransaction = transactions(async (req, res, session) => {
 
 const updateTransaction = transactions(async (req, res, session) => {
   const { id } = req.params;
-
   try {
     const transactionDoc = await transactionModel.findOneAndUpdate(
       { _id: id, user: req.user.userId },
@@ -61,6 +51,7 @@ const monthlyTransaction = async (req, res) => {
   const date = new Date();
   let lastMonth = new Date(date.setMonth(date.getMonth() - 1));
   let lastYear = new Date(date.setYear(date.getFullYear() - 1));
+  
   try {
     let monthlyTransactions = await transactionModel.aggregate([
       {
@@ -112,4 +103,4 @@ const fetchAllTransactions = async (req, res) => {
   }
 };
 
-module.exports = { makeTransaction, updateTransaction, monthlyTransaction, fetchAllTransactions };
+export{ makeTransaction, updateTransaction, monthlyTransaction, fetchAllTransactions };

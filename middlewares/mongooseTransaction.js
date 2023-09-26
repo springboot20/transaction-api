@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose'
 
 const transactions = (fn) => {
   return async (req, res) => {
@@ -11,4 +11,4 @@ const transactions = (fn) => {
   };
 };
 
-module.exports = transactions;
+export default transactions;
