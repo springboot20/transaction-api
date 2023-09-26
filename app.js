@@ -1,5 +1,5 @@
-require('dotenv').config();
-require('./db/connection')();
+import dotenv  from 'dotenv' 
+import connectToDatabase './db/connection' 
 
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -18,6 +18,7 @@ const CHAT_WITH_CONSULTANT = 'CHAT_WITH_CONSULTANT';
 
 // SOCKET CONNECTION
 initiateIO(server);
+connectToDatabase()
 
 mongoose.connection.on('connect', () => {
   console.log('Mongodb connected ....');
