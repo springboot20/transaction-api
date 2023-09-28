@@ -39,7 +39,16 @@ const createTransporter = async () => {
   });
 };
 
-const sendMail = async (emailOptions) => {
+const sendMail = async (payload, email, subject) => {
+  const options = () => {
+    return {
+      from: process.env.EMAIL,
+      to: email,
+      subject: subject,
+      html: payload,
+    };
+  };
+
   try {
     const transporter = await createTransporter();
     await transporter.sendMail(emailOptions);

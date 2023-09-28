@@ -1,15 +1,13 @@
-const express = require('express');
-const controllers = require('../controllers/index');
+import express from 'express';
+import * as controllers from '../controllers/index.js';
+import authenticate from '../utils/authentication.js';
+import { authorizePermission } from '../utils/jwt.js';
+
 const router = express.Router();
-const authenticateUser = require('../utils/authentication');
-const { authorizePermission } = require('../utils/jwt');
+router.route('/stats').get(authenticate, controllers.userController.userStatistics);
 
-router.route('/stats').get(authenticateUser, controllers.userController.userStatistics);
+router.route('/:id').get(authenticate, controllers.userController.getUser);
+router.route('/:id').put(authenticate, controllers.userController.updateUser);
+router.route('/').get(authenticate, authorizePermission('admin', 'sub-admin'), controllers.userController.getAllUsers);
 
-router.route('/:id').get(authenticateUser, controllers.userController.getUser);
-router.route('/:id').put(authenticateUser, controllers.userController.updateUser);
-router
-  .route('/')
-  .get(authenticateUser, authorizePermission('admin', 'sub-admin'), controllers.userController.getAllUsers);
-
-module.exports = router;
+export default router;

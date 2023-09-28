@@ -1,9 +1,5 @@
-const userRoute = require('./userRoute');
-const authRoute = require('./authRoute');
-const transactionRoute = require("./transactionRoute")
+import * as userRoute from './userRoute.js';
+import * as authRoute from './authRoute.js';
+import * as transactionRoute from './transactionRoute.js';
 
-module.exports = {
-  userRoute,
-  authRoute,
-  transactionRoute,
-};
+export { userRoute, authRoute, transactionRoute };

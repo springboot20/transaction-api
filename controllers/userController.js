@@ -1,9 +1,9 @@
-import { userModel } from '../models/index';
-import withTransactions from '../middlewares/mongooseTransaction';
+import { userModel } from '../models/index.js';
+import withTransactions from '../middlewares/mongooseTransaction.js';
 import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
-import { checkUserPermission } from '../utils/jwt';
+import { checkUserPermission } from '../utils/jwt.js';
 
 async function hashPassword(enteredPassword) {
   const salt = await bcrypt.genSalt(10);
@@ -13,7 +13,7 @@ async function hashPassword(enteredPassword) {
 const getAllUsers = async (req, res) => {
   console.log(req.user);
   const users = await userModel.find({ role: 'user' }).select('-password').exec();
-  res.status(StatusCodes.OK).json({ users });
+  res.status(StatusCodes.OK).json({ data: users });
 };
 
 const getUser = async (req, res) => {
@@ -28,7 +28,7 @@ const getUser = async (req, res) => {
       checkUserPermission(req.user, user._id);
     }
 
-    res.status(StatusCodes.OK).json({ user });
+    res.status(StatusCodes.OK).json({ data: user });
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
@@ -44,7 +44,7 @@ const updateUser = withTransactions(async (req, res, session) => {
   try {
     const updateUserDoc = await userModel.findOneAndUpdate({ _id: id }, { $set: req.body }, { new: true });
     await updateUserDoc.save({ session });
-    res.status(StatusCodes.OK).json(updateUserDoc);
+    res.status(StatusCodes.OK).json({ data: updateUserDoc });
   } catch (error) {
     console.error(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -95,7 +95,7 @@ const userStatistics = async (req, res) => {
         return { date, totalUser, role };
       })
       .reverse();
-    res.status(StatusCodes.OK).json({ usersStats });
+    res.status(StatusCodes.OK).json({ data: usersStats });
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }

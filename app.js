@@ -1,25 +1,29 @@
 import dotenv from 'dotenv';
-import connectToDatabase from './db/connection';
+dotenv.config({ path: './env' });
 
+import connectToDatabase from './db/connection.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import errorHandler from './middlewares/errorHandler';
-import routers from './routes/index';
+import errorHandler from './middlewares/errorHandler.js';
+import * as routers from './routes/index.js';
 import http from 'http';
-import initiateIO from './socketIO/socket';
-// const hbs = require("express-handlebar")
+import path from 'path';
+import * as url from 'url';
+import IO from './socketIO/socket.js';
 
 const app = express();
 const PORT = process.env.PORT || 4040;
 const server = http.createServer(app);
 const CHAT_WITH_CONSULTANT = 'CHAT_WITH_CONSULTANT';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // SOCKET CONNECTION
-initiateIO(server);
-connectToDatabase();
-dotenv.config({ path: './env' });
+IO(server);
+
+// connectToDatabase();
 
 mongoose.connection.on('connect', () => {
   console.log('Mongodb connected ....');
@@ -53,9 +57,13 @@ app.use((req, res, next) => {
  * API ROUTES
  */
 
-app.use('/api/auth', routers.authRoute);
-app.use('/api/users', routers.userRoute);
-app.use('/api/transactions', routers.transactionRoute);
+app.get('/', (req, res, next) => {
+  res.send('Welcome to my api {Application interface}');
+});
+
+app.use('/api/auth', routers.authRoute.default);
+app.use('/api/users', routers.userRoute.default);
+app.use('/api/transactions', routers.transactionRoute.default);
 
 app.use(errorHandler);
 app.listen(PORT, () => {

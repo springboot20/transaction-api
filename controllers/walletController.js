@@ -1,6 +1,6 @@
-import { walletModel } from '../models/index';
+import { walletModel } from '../models/index.js';
 import { StatusCodes } from 'http-status-codes';
-import transactions from '../middlewares/mongooseTransaction';
+import transactions from '../middlewares/mongooseTransaction.js';
 
 const createWallet = async (req, res, session) => {
   try {

@@ -1,14 +1,18 @@
 import { Server } from 'socket.io';
 
-const initiateIO = (server) => {
+const IO = (server) => {
   return new Server(server, {
     cors: {
       origin: '*',
-      methods: ['GET', 'POST'],
-      credentials: true,
+      methods: ['GET', 'POST', 'PUT'],
     },
   });
 };
-Server.on('connection', (_socket) => {});
 
-export default initiateIO;
+const init = new Server();
+
+init.on('connection', (socket) => {
+  console.log(`User ${socket.id}`);
+});
+
+export default IO;

@@ -1,22 +1,20 @@
-const express = require('express');
-const controllers = require('../controllers/index');
-const router = express.Router();
-const authenticateUser = require('../utils/authentication');
-const { authorizePermission } = require('../utils/jwt');
+import express from 'express';
+import * as controllers from '../controllers/index.js';
+import authenticate from '../utils/authentication.js';
+import { authorizePermission } from '../utils/jwt.js';
 
-router.route('/transaction-stats').get(authenticateUser, controllers.transactionController.monthlyTransaction);
+const router = express.Router();
+router.route('/transaction-stats').get(authenticate, controllers.transactionController.monthlyTransaction);
+
+router.route('/').post(authenticate, controllers.transactionController.makeTransaction);
 
 router
   .route('/')
-    .post(authenticateUser, controllers.transactionController.makeTransaction)
-  
- router
-   .route('/')
-   .get(
-     [authenticateUser, authorizePermission('admin', 'sub-admin')],
-     controllers.transactionController.fetchAllTransactions
-   );
+  .get(
+    [authenticate, authorizePermission('admin', 'sub-admin')],
+    controllers.transactionController.fetchAllTransactions
+  );
 
-router.route('/:id').put(authenticateUser, controllers.transactionController.updateTransaction);
+router.route('/:id').put(authenticate, controllers.transactionController.updateTransaction);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,7 @@
-import userModel from './user';
-import transactionModel from './transaction';
-import { walletModel, walletTransactionModel } from './wallet';
-import tokenModel from './token';
+import userModel from './user.js';
+import transactionModel from './transaction.js';
+import { walletModel, walletTransactionModel } from './wallet.js';
+import tokenModel from './token.js';
+import chatModel from './message.js';
 
-export { userModel, transactionModel, walletModel, walletTransactionModel, tokenModel };
+export { userModel, transactionModel, walletModel, walletTransactionModel, tokenModel, chatModel };

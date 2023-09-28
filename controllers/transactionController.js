@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { transactionModel, userModel, walletModel } from '../models/index'
-import transactions from '../middlewares/mongooseTransaction'
+import { transactionModel, userModel, walletModel } from '../models/index.js'
+import transactions from '../middlewares/mongooseTransaction.js'
 import moment from 'moment'
-import { createWallet } from './walletController'
-import Stripe from '../helpers/stripeService'
+import { createWallet } from './walletController.js'
+import Stripe from '../helpers/stripeService.js'
 
 const makeTransaction = transactions(async (req, res, session) => {
   req.body.user = req.user.userId;

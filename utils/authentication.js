@@ -1,9 +1,9 @@
 /** @format */
 
-import { validateToken } from '../utils/jwt.js'
-import * as models from '../models/index'
-import { tokenResponse } from '../utils/jwt'
-import { StatusCodes } from 'http-status-codes'
+import { validateToken } from '../utils/jwt.js';
+import * as models from '../models/index.js';
+import { tokenResponse } from '../utils/jwt.js';
+import { StatusCodes } from 'http-status-codes';
 
 const authenticate = async (req, res, next) => {
   let authHeader = req.headers?.authorization;
@@ -22,11 +22,11 @@ const authenticate = async (req, res, next) => {
 
   try {
     if (accessToken) {
-      const payload =  validateToken(accessToken);
+      const payload = validateToken(accessToken);
       req.user = payload.user;
       return next();
     }
-    const payload =  validateToken(refreshToken);
+    const payload = validateToken(refreshToken);
 
     const existingToken = await models.tokenModel.findOne({
       user: payload.user.userId,
@@ -49,4 +49,4 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = authenticate;
+export default authenticate;

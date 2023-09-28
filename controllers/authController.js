@@ -1,12 +1,12 @@
-import { userModel, tokenModel } from '../models/index';
-import withTransactions from '../middlewares/mongooseTransaction';
-import { createUserToken } from '../middlewares/createTokenUser';
-import { tokenResponse } from '../utils/jwt';
+import { userModel, tokenModel } from '../models/index.js';
+import withTransactions from '../middlewares/mongooseTransaction.js';
+import { createUserToken } from '../middlewares/createTokenUser.js';
+import { tokenResponse } from '../utils/jwt.js';
 import crypto from 'crypto';
 import { StatusCodes } from 'http-status-codes';
 import jsonwebtoken from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
-import sendMail from './emailService';
+import sendMail from './emailService.js';
 import bcrypt from 'bcryptjs';
 
 const signup = withTransactions(async (req, res, session) => {
@@ -113,16 +113,7 @@ const forgotPassword = async (req, res) => {
     const token = jwt.sign(payload, secret, { expiresIn: '15m' });
 
     const resetLink = `${req.protocol}://${req.get('host')}/api/v1/auth/reset-password/${user._id}/${token}`;
-
-    const options = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: 'Reset password notification',
-      html: `<a href=${resetLink}> Reset Link</a>`,
-    };
-
-    sendMail(options);
-    res.status(StatusCodes.OK).json({ message: 'Reset link successfully sent to your email ', data: resetLink });
+    res.status(StatusCodes.OK).json({ message: 'Reset link successfully sent to your email ' });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
