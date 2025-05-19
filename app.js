@@ -1,28 +1,43 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: './env' });
+dotenv.config({ path: './.env' });
 
-import connectToDatabase from './db/connection.js';
+// import connectToDatabase from './db/connection.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import errorHandler from './middlewares/errorHandler.js';
-import * as routers from './routes/index.js';
 import http from 'http';
 import path from 'path';
 import * as url from 'url';
-import IO from './socketIO/socket.js';
+import { Server } from 'socket.io';
 
 const app = express();
 const PORT = process.env.PORT || 4040;
 const server = http.createServer(app);
-const CHAT_WITH_CONSULTANT = 'CHAT_WITH_CONSULTANT';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// SOCKET CONNECTION
-IO(server);
+const io = new Server(server);
 
+let connectedSockets = new Set();
+
+io.on('connection', (socket) => {
+  socket.emit('broadcast', 'connected');
+
+  console.log(`connected socket id: ${socket.id}`);
+  connectedSockets.add(socket.id);
+
+  io.emit('total-sockets', connectedSockets.size);
+
+  socket.on('disconnect', () => {
+    console.log(`socket disconnected: ${socket.id}`);
+
+    connectedSockets.delete(socket.id);
+    io.emit('total-sockets', connectedSockets.size);
+  });
+});
+
+// DATABASE CONNECTION
 // connectToDatabase();
 
 mongoose.connection.on('connect', () => {
@@ -36,9 +51,16 @@ process.on('SIGINT', () => {
   });
 });
 
+app.set('io', io);
+
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// static file configuration
+app.use(express.static(path.join(__dirname, 'public')));
+
+// cors configuration
 app.use(
   cors({
     origin: '*',
@@ -56,16 +78,14 @@ app.use((req, res, next) => {
 /**
  * API ROUTES
  */
-
-app.get('/', (req, res, next) => {
-  res.send('Welcome to my api {Application interface}');
+server.listen(PORT, () => {
+  console.log(`Server running at PORT http://localhost:${PORT}`);
 });
 
-app.use('/api/auth', routers.authRoute.default);
-app.use('/api/users', routers.userRoute.default);
-app.use('/api/transactions', routers.transactionRoute.default);
-
-app.use(errorHandler);
-app.listen(PORT, () => {
-  console.log(`Server running at PORT http://localhost:${PORT}`);
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} already in use`);
+  } else {
+    console.log(`Server error : ${error}`);
+  }
 });
